@@ -1,0 +1,37 @@
+<div id="sudoku-board">
+  <!-- column number -->
+  {% for row in sudoku_board %}
+  <div class="cols col-{{ forloop.counter }}">
+    {% for cell in row %}
+    <div
+      class="cell row row-{{ forloop.counter }} col col-{{ forloop.parentloop.counter}} {% if cell != '0' %} pre-filled{% else %} empty{% endif %}"
+      onclick="highlightCell(this)"
+    >
+      {% if cell != "0" %}<span>{{cell}}</span>{% else %}
+      <div class="input-field"></div>
+      <div class="notes-container">
+        {% for i in "123456789" %}
+        <div
+          class="note note-{{ i }} inactive"
+          onclick="activateNote(this.classList[1][this.classList[1].length - 1])"
+        >
+          {{i}}
+        </div>
+        {% endfor %}
+      </div>
+      <div class="candidates-container">
+        {% for i in "123456789" %}
+        <div
+          class="candidate candidate-{{i}} inactive"
+          onclick="activateCandidate(this.classList[1][this.classList[1].length-1])"
+        >
+          {{i}}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>

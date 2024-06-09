@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {% load static %}
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'css/sudoku_styles.css' %}"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <div class="all-content">
+    <div id="win-screen" class="win-full-screen">
+      <div class="win-screen-container">
+        <i id="close-win-box" class="fa-solid fa-xmark"></i>
+        <div class="win-screen-text">
+          <h1>You have completed the puzzle!</h1>
+
+          <div class="win-stats">
+            <p>
+              <span><strong>Difficulty: </strong></span
+              ><span id="final-difficulty"></span>
+            </p>
+            <p>
+              <span><strong>Time: </strong></span><span id="final-time"></span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="help-screen" class="help-full-screen">
+      <div class="help-box-container">
+        <i id="close-help-box" class="fa-solid fa-xmark"></i>
+        <div class="play-rules">
+          <h1>How to play</h1>
+          <ul class="rules-list">
+            <li>Fill each row, column, and 3x3 grid with numbers 1-9</li>
+            <li>
+              Each number can appear only once in each row, column, and grid
+            </li>
+            <li>Use the keyboard or control panel to input numbers</li>
+          </ul>
+        </div>
+        <div class="mode-rules">
+          <h1>Modes</h1>
+          <ul class="modes-list">
+            <li><strong>Easy</strong></li>
+            <li><strong>Medium</strong></li>
+            <li><strong>Hard</strong></li>
+            <li>
+              <strong>Chaos: </strong>unpredictable changes during play with
+              modifiable difficulty
+              <p>
+                <strong>1: </strong>Select difficulty (easy, medium, hard)<br />
+                <strong>2: </strong>Select frequency and type(s)
+              </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div id="settings-menu" class="settings-menu">
+      <div class="settings-box-container">
+        <i id="close-settings-box" class="fa-solid fa-xmark"></i>
+        <div class="settings-choice-container">
+          <h3>General</h3>
+          <ul>
+            <li>
+              <div class="setting-flex">
+                <p>Highlight conflicts</p>
+                <input type="checkbox" />
+              </div>
+            </li>
+            <li>
+              <div class="setting-flex">
+                <p>Autocheck</p>
+                <input type="checkbox" />
+              </div>
+            </li>
+            <h3>Chaos</h3>
+            <li>
+              <div class="chaos-container">
+                <ul class="chaos-options">
+                  <li>
+                    <p>Frequency</p>
+
+                    <ul class="frequency-options">
+                      <li>
+                        <label for="random">Random</label>
+                        <input
+                          type="checkbox"
+                          id="random"
+                          name="random"
+                          checked
+                        />
+                      </li>
+
+                      <li class="frequency-container">
+                        <div>
+                          <label for="random-frequency">
+                            Random frequency range
+                          </label>
+                          <input
+                            type="checkbox"
+                            id="random-frequency"
+                            name="random-frequency"
+                          />
+                        </div>
+                        <div class="min-max-container">
+                          <form class="frequency-box">
+                            <input
+                              type="number"
+                              id="min-actions"
+                              placeholder="Min actions/min"
+                              min="1"
+                              max="10"
+                            />
+                          </form>
+                          <form class="frequency-box">
+                            <input
+                              type="number"
+                              id="max-actions"
+                              placeholder="Max actions/min"
+                              max="10"
+                              min="1"
+                            />
+                          </form>
+                        </div>
+                      </li>
+                      <li class="frequency-container">
+                        <div>
+                          <label for="fixed-frequency"> Fixed frequency </label>
+                          <input
+                            type="checkbox"
+                            id="fixed-frequency"
+                            name="fixed-frequency"
+                          />
+                        </div>
+                        <form class="frequency-box">
+                          <input
+                            max="10"
+                            min="1"
+                            type="number"
+                            id="fixed-freq-input"
+                            placeholder="Actions/min"
+                          />
+                        </form>
+                      </li>
+                    </ul>
+                  </li>
+
+                  <li>
+                    <p>Actions</p>
+                    <ul class="actions-options">
+                      <li>
+                        <div>
+                          <label for="rotations">Rotations</label>
+                          <input
+                            type="checkbox"
+                            id="rotations"
+                            name="rotations"
+                            checked
+                          />
+                        </div>
+                      </li>
+                      <li>
+                        <div>
+                          <label for="memory-challenge">Memory challenge</label>
+                          <input
+                            type="checkbox"
+                            id="memory-challenge"
+                            name="memory-challenge"
+                          />
+                        </div>
+                      </li>
+                      <li>
+                        <div class="adjacent-container">
+                          <label for="adjacent-bombing">Adjacent bombing</label>
+                          <input
+                            type="checkbox"
+                            id="adjacent-bombing"
+                            name="adjacent-bombing"
+                          />
+                          <i class="fa-solid fa-triangle-exclamation"></i>
+                          <span class="tooltip-text">Undo unavailable</span>
+                        </div>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <header>
+      <div class="header">
+        <h1>SUDOKU</h1>
+      </div>
+      <div class="top-mode-bar">
+        <ul class="top-modes">
+          <li>
+            <a class="top-link" href="/sudoku/easy" data-value="/easy">Easy</a>
+          </li>
+          <li>
+            <a class="top-link" href="/sudoku/medium" data-value="/medium"
+              >Medium</a
+            >
+          </li>
+          <li>
+            <a class="top-link" href="/sudoku/hard" data-value="/hard">Hard</a>
+          </li>
+        </ul>
+      </div>
+    </header>
+    <body>
+      <div class="board-wrapper">
+        <div class="outer-container">
+          <div class="sudoku-container">
+            <div class="top-display">
+              <div class="top-display-inner">
+                <div class="left-controls">
+                  <button id="reset-btn">Restart</button>
+
+                  <div class="difficulty-wrap-menu">
+                    <div
+                      id="difficulty-menu-label"
+                      class="difficulty-menu-label"
+                    >
+                      <span
+                        id="difficulty-menu-label-text"
+                        class="difficulty-label-text"
+                      >
+                      </span>
+                      <i class="fa-solid fa-angle-down"></i>
+                    </div>
+                    <select
+                      id="difficulty-menu-select"
+                      class="difficulty-menu-select"
+                    >
+                      <option data-difficulty="easy" value="/easy">Easy</option>
+                      <option data-difficulty="medium" value="/medium">
+                        Medium
+                      </option>
+                      <option data-difficulty="hard" value="/hard">Hard</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="timer-controls-container">
+                  <div class="timer-container">
+                    <div class="timer" id="display">0:00</div>
+                  </div>
+                  <i id="pause-btn" class="fa-solid fa-play"></i>
+                </div>
+                <div class="right-controls-container">
+                  <ul class="right-controls">
+                    <li id="hints-bar-top">
+                      <i class="fa-solid fa-ellipsis"></i>
+                      <div class="hints-container-top">
+                        <ul class="hint-options-top">
+                          <li id="check-cell-btn-top">
+                            <button>Check cell</button>
+                          </li>
+                          <li id="check-puzzle-btn-top">
+                            <button>Check puzzle</button>
+                          </li>
+                          <li id="reveal-cell-btn-top">
+                            <button>Reveal cell</button>
+                          </li>
+                          <li id="reveal-puzzle-btn-top">
+                            <button>Reveal puzzle</button>
+                          </li>
+                        </ul>
+                      </div>
+                    </li>
+                    <li id="chaos-bar">
+                      <i
+                        id="chaos-btn"
+                        class="fa-solid fa-circle-radiation"
+                      ></i>
+                    </li>
+
+                    <li id="help">
+                      <i class="fa-solid fa-circle-question"></i>
+                    </li>
+                    <li id="settings">
+                      <i id="settings-btn" class="fa-solid fa-gear"></i>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            {% block content %}
+            <div class="sudoku-board-ext-cont">
+              {% include "sudoku/sudoku_board.html" %}
+            </div>
+            <script type="application/javascript">
+              let winningB = "{{ sudoku_solution|safe }}";
+            </script>
+            {% endblock %}
+          </div>
+          <div class="right-container">
+            <div class="hints-container">
+              <ul class="hint-options">
+                <li id="check-cell-btn"><button>Check cell</button></li>
+                <li id="check-puzzle-btn"><button>Check puzzle</button></li>
+                <li id="reveal-cell-btn"><button>Reveal cell</button></li>
+                <li id="reveal-puzzle-btn"><button>Reveal puzzle</button></li>
+              </ul>
+            </div>
+
+            <div class="control-panel">
+              <div class="number-select-container">
+                <div class="num-sel sel-1">
+                  <button
+                    onclick="addNum(1, document.querySelector('.selected'))"
+                  >
+                    1
+                  </button>
+                </div>
+                <div class="num-sel sel-2">
+                  <button
+                    onclick="addNum(2, document.querySelector('.selected'))"
+                  >
+                    2
+                  </button>
+                </div>
+                <div class="num-sel sel-3">
+                  <button
+                    onclick="addNum(3, document.querySelector('.selected'))"
+                  >
+                    3
+                  </button>
+                </div>
+                <div class="num-sel sel-4">
+                  <button
+                    onclick="addNum(4, document.querySelector('.selected'))"
+                  >
+                    4
+                  </button>
+                </div>
+                <div class="num-sel sel-5">
+                  <button
+                    onclick="addNum(5, document.querySelector('.selected'))"
+                  >
+                    5
+                  </button>
+                </div>
+                <div class="num-sel sel-6">
+                  <button
+                    onclick="addNum(6, document.querySelector('.selected'))"
+                  >
+                    6
+                  </button>
+                </div>
+                <div class="num-sel sel-7">
+                  <button
+                    onclick="addNum(7, document.querySelector('.selected'))"
+                  >
+                    7
+                  </button>
+                </div>
+                <div class="num-sel sel-8">
+                  <button
+                    onclick="addNum(8, document.querySelector('.selected'))"
+                  >
+                    8
+                  </button>
+                </div>
+                <div class="num-sel sel-9">
+                  <button
+                    onclick="addNum(9, document.querySelector('.selected'))"
+                  >
+                    9
+                  </button>
+                </div>
+                <button id="remove-btn">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+            </div>
+            <div class="bottom-controls-mb">
+              <div class="control-adjust">
+                <div class="left-adjust">
+                  <div class="undo-container">
+                    <button id="undo-btn">
+                      <i class="fa-solid fa-rotate-left"></i>
+                    </button>
+                    <p>Undo</p>
+                  </div>
+                </div>
+                <div class="right-adjust">
+                  <div class="candidate-container">
+                    <p>Candidate mode</p>
+                    <input type="checkbox" id="candidate-btn" />
+                  </div>
+                </div>
+              </div>
+              <div class="last-move-container">
+                <h1>Last move</h1>
+                <div class="last-num">
+                  <h3>Num</h3>
+                  <p id="last-num-val"></p>
+                </div>
+                <div class="last-cell">
+                  <h3>Cell</h3>
+                  <p id="last-cell-val"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script src="{% static 'js/script.js' %}"></script>
+      <script
+        src="https://kit.fontawesome.com/e08acc423f.js"
+        crossorigin="anonymous"
+      ></script>
+    </body>
+  </div>
+</html>
