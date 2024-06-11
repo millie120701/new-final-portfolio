@@ -18,7 +18,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
 DEBUG = 'RENDER' not in os.environ
 
 # https://docs.djangoproject.com/en/3.0/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ["milliegallacher.uk", "localhost"]
+ALLOWED_HOSTS = ["milliegallacher.uk", "localhost", "127.0.0.1"]
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
@@ -71,8 +71,8 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sudoku_db',
-        'USER': 'admin_user',
+        'NAME': 'sudoku-db',
+        'USER': 'user_admin',
         'PASSWORD': 'mypassword',
         'HOST': 'localhost',
         'PORT': '5432',
