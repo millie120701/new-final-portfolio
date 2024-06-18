@@ -3,6 +3,7 @@
 import os
 from pathlib import Path
 import dj_database_url
+import django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -18,7 +19,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
 DEBUG = 'RENDER' not in os.environ
 
 # https://docs.djangoproject.com/en/3.0/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ["milliegallacher.uk", "localhost", "127.0.0.1", "https://sudoku-portfolio-app-5f6fa6996a27.herokuapp.com/"]
+ALLOWED_HOSTS = ["*"]
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
@@ -121,6 +122,8 @@ STATICFILES_DIRS = [
 
 # The directory where 'collectstatic' will collect static files for deployment
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+django_heroku.settings(locals())
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
