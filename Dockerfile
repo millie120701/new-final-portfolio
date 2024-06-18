@@ -1,6 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.9-slim
-
+FROM python:3.10.10-buster
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
