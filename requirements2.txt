@@ -1,3 +1,4 @@
 dj_database_url==2.2.0
 Django==5.0.2
 pandas==2.0.0
+whitenoise
