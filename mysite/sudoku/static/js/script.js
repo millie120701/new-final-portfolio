@@ -1,5 +1,5 @@
 let candidateBtn = document.getElementById("candidate-btn");
-
+let intervalId;
 let gameActivated = true;
 let autoCandidateModeEnabled = false;
 
@@ -147,7 +147,7 @@ function startGame() {
     }
 
     if (actionsEnabled) {
-      setInterval(() => executeChaos(actionsEnabled), actualFreq);
+      intervalId = setInterval(() => executeChaos(actionsEnabled), actualFreq);
     }
   }
 }
@@ -827,6 +827,7 @@ function checkWin() {
   pauseBtn.style.display = "none";
   gameActivated = false;
   gameInProgress = false;
+  clearInterval(intervalId);
 }
 
 //check cell
