@@ -87,12 +87,20 @@ window.addEventListener("load", function () {
 
     // update the selectElement to this value so it matches the url and selected difficulty
     selectElement.value = difficultySegment;
-    difficultyText.textContent = difficultySegment.replace("/", "").capit;
+    if (difficultySegment.includes("/")) {
+      difficultyText.textContent = difficultySegment.replace("/", "").capit;
+    } else {
+      difficultyText.textContent = difficultySegment.capit;
+    }
   } else if (savedDifficulty && savedDifficulty != difficultySegment) {
     // this means that there is a saved difficulty, but the url is different i.e. user has manually typed in the difficulty in the url, bypassing the local storage update
     localStorage.setItem("savedDifficulty", difficultySegment);
     selectElement.value = difficultySegment;
-    difficultyText.textContent = difficultySegment.replace("/", "");
+    if (difficultySegment.includes("/")) {
+      difficultyText.textContent = difficultySegment.replace("/", "");
+    } else {
+      difficultyText.textContent = difficultySegment;
+    }
   }
   // there is a saved difficulty and this does match the url
   else {
