@@ -10,6 +10,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <div class="all-content">
+    <div id="pause-screen" class="pause-screen">
+      <div class="pause-inner-container">
+        <p>Your game has been paused</p>
+        <button id="resume-btn">Resume</button>
+      </div>
+    </div>
     <div id="win-screen" class="win-full-screen">
       <div class="win-screen-container">
         <i id="close-win-box" class="fa-solid fa-xmark"></i>
@@ -48,11 +54,13 @@
             <li><strong>Medium</strong></li>
             <li><strong>Hard</strong></li>
             <li>
-              <strong>Chaos: </strong>unpredictable changes during play with
-              modifiable difficulty
+              <strong>Chaos: </strong>unpredictable changes during play -
+              denoted by <i class="fa-solid fa-circle-radiation"></i> symbol
+              (changes take effect in the next game, not current)
               <p>
-                <strong>1: </strong>Select difficulty (easy, medium, hard)<br />
-                <strong>2: </strong>Select frequency and type(s)
+                <strong>1 </strong>Select difficulty (easy, medium, hard)<br />
+                <strong>2 </strong>Select frequency and type(s)<br />
+                <strong>3 </strong>Ensure symbol is highlighted blue
               </p>
             </li>
           </ul>
@@ -68,13 +76,17 @@
             <li>
               <div class="setting-flex">
                 <p>Highlight conflicts</p>
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  id="conflicts-btn"
+                  class="conflicts-btn"
+                />
               </div>
             </li>
             <li>
               <div class="setting-flex">
                 <p>Autocheck</p>
-                <input type="checkbox" />
+                <input type="checkbox" id="autocheck-btn" />
               </div>
             </li>
             <h3>Chaos</h3>
@@ -86,7 +98,9 @@
 
                     <ul class="frequency-options">
                       <li>
-                        <label for="random">Random</label>
+                        <label for="random"
+                          >Random (approx 2-3 actions/min)</label
+                        >
                         <input
                           type="checkbox"
                           id="random"
@@ -182,7 +196,9 @@
                             name="adjacent-bombing"
                           />
                           <i class="fa-solid fa-triangle-exclamation"></i>
-                          <span class="tooltip-text">Undo unavailable</span>
+                          <span class="tooltip-text"
+                            >Get a cell wrong? Adjacent cells are bombed!</span
+                          >
                         </div>
                       </li>
                     </ul>
@@ -253,7 +269,7 @@
                   <div class="timer-container">
                     <div class="timer" id="display">0:00</div>
                   </div>
-                  <i id="pause-btn" class="fa-solid fa-play"></i>
+                  <i id="pause-btn" class="fa-solid fa-pause"></i>
                 </div>
                 <div class="right-controls-container">
                   <ul class="right-controls">
@@ -262,16 +278,28 @@
                       <div class="hints-container-top">
                         <ul class="hint-options-top">
                           <li id="check-cell-btn-top">
-                            <button>Check cell</button>
+                            <button
+                              onclick="checkCell(document.querySelector('.selected'))"
+                            >
+                              Check cell
+                            </button>
                           </li>
                           <li id="check-puzzle-btn-top">
-                            <button>Check puzzle</button>
+                            <button onclick="checkPuzzle()">
+                              Check puzzle
+                            </button>
                           </li>
                           <li id="reveal-cell-btn-top">
-                            <button>Reveal cell</button>
+                            <button
+                              onclick="revealCell(document.querySelector('.selected'))"
+                            >
+                              Reveal cell
+                            </button>
                           </li>
                           <li id="reveal-puzzle-btn-top">
-                            <button>Reveal puzzle</button>
+                            <button onclick="revealPuzzle()">
+                              Reveal puzzle
+                            </button>
                           </li>
                         </ul>
                       </div>
@@ -303,6 +331,10 @@
             {% endblock %}
           </div>
           <div class="right-container">
+            <div class="number-candidate-container">
+              <div class="num-cand num-l" id="number-show">Number</div>
+              <div class="num-cand cand-r" id="cand-show">Candidate</div>
+            </div>
             <div class="hints-container">
               <ul class="hint-options">
                 <li id="check-cell-btn"><button>Check cell</button></li>
@@ -416,6 +448,7 @@
       </div>
 
       <script src="{% static 'js/script.js' %}"></script>
+      <script src="{% static 'js/chaosWorker.js' %}"></script>
       <script
         src="https://kit.fontawesome.com/e08acc423f.js"
         crossorigin="anonymous"

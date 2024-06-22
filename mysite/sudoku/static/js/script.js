@@ -1,8 +1,6 @@
 let candidateBtn = document.getElementById("candidate-btn");
 
-let gameActivated = false;
-toggleButtons();
-
+let gameActivated = true;
 let autoCandidateModeEnabled = false;
 
 let winningBoard = JSON.parse(winningB.replace(/'/g, '"'));
@@ -11,15 +9,42 @@ let sudokuBoard = document.getElementById("sudoku-board");
 let noteModeEnabled;
 
 let chaosModeActivated = false;
-let gameInProgress = false;
+let gameInProgress = true;
 let bombs;
 let startTime;
 let elapsedTime = 0;
 let timerInterval;
 let movesHistory = [];
+let conflicts;
 
+// set up note mode
+
+let numberActivatedBox = document.getElementById("number-show");
+let candidateActivatedBox = document.getElementById("cand-show");
 // hints bar
 
+numberActivatedBox.addEventListener("click", function () {
+  if (!numberActivatedBox.classList.contains("active")) {
+    numberActivatedBox.classList.toggle("active");
+    candidateActivatedBox.classList.toggle("active");
+    noteModeEnabled = false;
+  }
+});
+
+candidateActivatedBox.addEventListener("click", function () {
+  if (!candidateActivatedBox.classList.contains("active")) {
+    numberActivatedBox.classList.toggle("active");
+    candidateActivatedBox.classList.toggle("active");
+    noteModeEnabled = true;
+  }
+});
+
+function resetNumCandBox() {
+  if (!numberActivatedBox.classList.contains("active")) {
+    numberActivatedBox.classList.add("active");
+    candidateActivatedBox.classList.remove("active");
+  }
+}
 let ellipsisMenu = document.querySelector("#hints-bar-top");
 
 ellipsisMenu.addEventListener("click", function () {
@@ -40,6 +65,11 @@ selectElement.addEventListener("change", function () {
 // On page load, set the select value from localStorage
 window.addEventListener("load", function () {
   // if there is not already a selected difficulty, then set the selected difficulty as current link and change selectElement accordingly
+  startGame();
+  start();
+
+  gameActivated = true;
+  gameInProgress = true;
 
   let savedDifficulty = localStorage.getItem("selectedDifficulty");
   let currentUrl = window.location.href;
@@ -58,19 +88,16 @@ window.addEventListener("load", function () {
     // update the selectElement to this value so it matches the url and selected difficulty
     selectElement.value = difficultySegment;
     difficultyText.textContent = difficultySegment.replace("/", "").capit;
-    console.log(difficultyText);
   } else if (savedDifficulty && savedDifficulty != difficultySegment) {
     // this means that there is a saved difficulty, but the url is different i.e. user has manually typed in the difficulty in the url, bypassing the local storage update
     localStorage.setItem("savedDifficulty", difficultySegment);
     selectElement.value = difficultySegment;
     difficultyText.textContent = difficultySegment.replace("/", "");
-    console.log(difficultyText);
   }
   // there is a saved difficulty and this does match the url
   else {
     selectElement.value = savedDifficulty;
     difficultyText.textContent = difficultySegment.replace("/", "");
-    console.log(difficultyText);
   }
 });
 
@@ -84,11 +111,24 @@ topLinks.forEach((link) => {
   });
 });
 
+function executeChaos(actionsEnabled) {
+  let selectedTask =
+    actionsEnabled[Math.floor(Math.random() * actionsEnabled.length)];
+
+  if (selectedTask == "rotations") {
+    rotateBoard();
+  } else if (selectedTask == "memory-challenge") {
+    hideNumber();
+  }
+}
+
 function startGame() {
   // if the game was just won the buttons need activating again as they are disabled when the user wins
   noteModeEnabled = false;
+  resetNumCandBox();
   undoBtn.disabled = false;
   movesHistory = [];
+  gameActivated = true;
   pauseBtn.style.display = "block";
   candidateBtn.checked = false;
   autoCandidateModeEnabled = false;
@@ -96,26 +136,11 @@ function startGame() {
     getChaosInformation();
     if (adjacentBombing) {
       setBombs();
-      undoBtn.disabled = "disabled";
     }
 
-    if (actionsEnabled)
-      setInterval(() => {
-        if (elapsedTime >= actualFreq) {
-          if (
-            actionsEnabled[Math.floor(Math.random() * actionsEnabled.length)] ==
-            "rotations"
-          ) {
-            rotateBoard();
-          } else if (
-            actionsEnabled[Math.floor(Math.random() * actionsEnabled.length)] ==
-            "memory-challenge"
-          ) {
-            hideNumber();
-          }
-          actualFreq = elapsedTime + actualFreq;
-        }
-      }, 20); // check
+    if (actionsEnabled) {
+      setInterval(() => executeChaos(actionsEnabled), actualFreq);
+    }
   }
 }
 
@@ -199,7 +224,6 @@ let pauseBtn = document.getElementById("pause-btn");
 function start() {
   if (!gameActivated) {
     gameActivated = true;
-    toggleButtons();
     gameInProgress = true;
   }
 
@@ -211,13 +235,20 @@ function start() {
   }, 10);
 }
 
+let pauseScreen = document.getElementById("pause-screen");
+let resumeBtn = document.getElementById("resume-btn");
+
+resumeBtn.addEventListener("click", function () {
+  pauseScreen.classList.toggle("active");
+  start();
+});
+
 function pause() {
   clearInterval(timerInterval);
   gameActivated = false;
-  toggleButtons();
 }
 
-resetBtn = document.getElementById("reset-btn");
+let resetBtn = document.getElementById("reset-btn");
 
 window.onload = function () {
   candidateBtn.checked = false;
@@ -225,8 +256,8 @@ window.onload = function () {
 
 resetBtn.addEventListener("click", function () {
   movesHistory = [];
-  gameActivated = false;
-  toggleButtons();
+  gameActivated = true;
+
   candidateBtn.checked = false;
   resetNotesandCandidates();
   clearInterval(timerInterval);
@@ -247,11 +278,9 @@ resetBtn.addEventListener("click", function () {
   let lastCellParagraph = document.getElementById("last-cell-val");
   lastCellParagraph.textContent = "";
   lastNumParagraph.textContent = "";
-  if (pauseBtn.classList.contains("fa-pause")) {
-    pauseBtn.classList.toggle("fa-pause");
-    pauseBtn.classList.toggle("fa-play");
-  }
+
   startGame();
+  start();
 });
 
 // let newBtn = document.getElementById("new-board");
@@ -277,11 +306,10 @@ resetBtn.addEventListener("click", function () {
 pauseBtn.addEventListener("click", function () {
   if (this.classList.contains("fa-pause")) {
     pause();
+    pauseScreen.classList.toggle("active");
   } else {
     start();
   }
-  this.classList.toggle("fa-pause");
-  this.classList.toggle("fa-play");
 });
 
 let helpBtn = document.getElementById("help");
@@ -403,6 +431,12 @@ window.addEventListener("keydown", (event) => {
     if (event.target.id === "candidate-btn") {
       event.preventDefault();
     }
+    if ((event.target = document.body)) {
+      event.preventDefault();
+    }
+    numberActivatedBox.classList.toggle("active");
+    candidateActivatedBox.classList.toggle("active");
+
     return;
   }
   let btnPressed = event.key;
@@ -524,6 +558,13 @@ window.addEventListener("keydown", (event) => {
         addNum(numberPressed, selectedCell, false);
       }
     } else if (event.key == "Backspace") {
+      let conflictCircle = selectedCell.querySelector(
+        ".fa-solid.fa-circle.conflict-circle"
+      );
+      if (conflictCircle) {
+        conflictCircle.remove();
+      }
+
       removeValue(selectedCell, false);
       selectedCell.classList.remove("rejected");
 
@@ -538,6 +579,88 @@ window.addEventListener("keydown", (event) => {
     }
   }
 });
+
+function findConflicts(selectedCell) {
+  if (selectedCell.classList.contains("empty")) {
+    return;
+  }
+  let row = selectedCell.classList[2][selectedCell.classList[2].length - 1];
+  let col = selectedCell.classList[4][selectedCell.classList[4].length - 1];
+  const EndRow = Math.ceil(row / 3) * 3; // final row in the 3x3 grid that the cell is in
+  const EndCol = Math.ceil(col / 3) * 3; // final col in the 3x3 grid that the cell is in
+  let possibleConflicts = [];
+  // get all cells in the 3x3 grid
+  for (i = EndRow; i > EndRow - 3; i--) {
+    for (j = EndCol; j > EndCol - 3; j--) {
+      let num;
+      // cell is at row i and col j
+      // if the cell is pre-filled then the number is the textContent of the cell, if the cell is not-prefilled then the number is the textContent of the input field
+      let currentCell = document.querySelector(`.row-${i}.col-${j}`);
+
+      if (currentCell.classList.contains("pre-filled")) {
+        num = currentCell.textContent.trim();
+      } else {
+        num = currentCell.querySelector(".input-field").textContent.trim();
+      }
+
+      possibleConflicts.push(num);
+    }
+  }
+  // look at numbers in same row that it cannot be
+  let cellsinRow = document.querySelectorAll(`.row.row-${row}`);
+  cellsinRow.forEach((r) => {
+    if (r.classList.contains("pre-filled")) {
+      num = r.textContent.trim();
+    } else {
+      num = r.querySelector(".input-field").textContent.trim();
+    }
+    possibleConflicts.push(num);
+  });
+
+  let cellsinCol = document.querySelectorAll(`.col.col-${col}`);
+  cellsinCol.forEach((c) => {
+    if (c.classList.contains("pre-filled")) {
+      num = c.textContent.trim();
+    } else {
+      num = c.querySelector(".input-field").textContent.trim();
+    }
+    possibleConflicts.push(num);
+  });
+
+  // remove the number that the cell actually is, 3x (3x3, row, col)
+
+  for (let i = 0; i < 3; i++) {
+    let index = possibleConflicts.indexOf(
+      selectedCell.querySelector(".input-field").textContent.trim()
+    );
+    if (index !== -1) {
+      possibleConflicts.splice(index, 1);
+    } else {
+      break; // If the element is not found, exit the loop
+    }
+  }
+  if (
+    possibleConflicts.includes(
+      selectedCell.querySelector(".input-field").textContent.trim()
+    )
+  ) {
+    if (
+      !selectedCell.classList.contains("fa-solid fa-circle conflict-circle")
+    ) {
+      selectedCell.innerHTML +=
+        '<i class="fa-solid fa-circle conflict-circle" id="conflict-circle"></i>';
+    }
+  } else if (
+    !possibleConflicts.includes(
+      selectedCell.querySelector(".input-field").textContent.trim()
+    )
+  ) {
+    let conflictCircle = selectedCell.querySelector("#conflict-circle");
+    if (conflictCircle) {
+      conflictCircle.remove();
+    }
+  }
+}
 
 function updateLastMove(numberPressed, newRow, newCol) {
   let selectedCell = document.querySelector(`.row-${newRow}.col-${newCol}`);
@@ -587,10 +710,11 @@ function addNum(num, selectedCell, fromUndo) {
     parseInt(winningBoard[changedCol - 1][changedRow - 1]) !=
     parseInt(inputField.textContent)
   ) {
-    // check if this is a bomb cell
-    if (bombs.includes(selectedCell)) {
-      let adjacentCells = Array.from(
-        document.querySelectorAll(`
+    if (adjacentBombing) {
+      // check if this is a bomb cell
+      if (bombs.includes(selectedCell)) {
+        let adjacentCells = Array.from(
+          document.querySelectorAll(`
       .row-${changedRow}.col-${changedCol - 1}:not(.pre-filled),
       .row-${changedRow}.col-${changedCol + 1}:not(.pre-filled),
       .row-${changedRow + 1}.col-${changedCol - 1}:not(.pre-filled),
@@ -600,13 +724,20 @@ function addNum(num, selectedCell, fromUndo) {
       .row-${changedRow - 1}.col-${changedCol + 1}:not(.pre-filled),
       .row-${changedRow - 1}.col-${changedCol}:not(.pre-filled)
   `)
-      );
-      let celltoBomb;
-      for (let i = 0; i < adjacentCells.length; i++) {
-        celltoBomb = adjacentCells[i];
-        removeValue(celltoBomb, false);
+        );
+        let celltoBomb;
+        for (let i = 0; i < adjacentCells.length; i++) {
+          celltoBomb = adjacentCells[i];
+          removeValue(celltoBomb, true); // acts like move has come from undo so you cannot undo this move
+        }
       }
     }
+  }
+  if (autoCheck) {
+    checkCell(selectedCell);
+  }
+  if (conflicts) {
+    findConflicts(selectedCell);
   }
 }
 
@@ -679,9 +810,12 @@ function checkWin() {
     }
   }
   pause();
+  stopTimer();
   winScreen.classList.add("active");
   winTimeSpan.textContent = document.getElementById("display").innerHTML;
-  winDifficultySpan.textContent = "easy";
+  winDifficultySpan.textContent = localStorage
+    .getItem("selectedDifficulty")
+    .replace("/", "");
   pauseBtn.style.display = "none";
   gameActivated = false;
   gameInProgress = false;
@@ -705,12 +839,19 @@ function checkCell(selectedCell) {
     selectedCell.classList[2][selectedCell.classList[2].length - 1];
   let selectedCol =
     selectedCell.classList[4][selectedCell.classList[2].length - 1];
-  console.log(winningBoard);
+
   if (
     winningBoard[selectedCol - 1][selectedRow - 1] ==
     parseInt(inputField.textContent)
   ) {
     selectedCell.classList.add("confirmed");
+    let conflictCircle = selectedCell.querySelector(
+      ".fa-solid.fa-circle.conflict-circle"
+    );
+    if (conflictCircle) {
+      conflictCircle.remove();
+    }
+
     let empty = document.querySelectorAll(".empty");
     if (empty.length === 0) {
       checkWin();
@@ -749,6 +890,12 @@ function revealCell(selectedCell) {
   inputField.textContent = winningBoard[selectedCol - 1][selectedRow - 1];
 
   selectedCell.classList.add("confirmed");
+  let conflictCircle = selectedCell.querySelector(
+    ".fa-solid.fa-circle.conflict-circle"
+  );
+  if (conflictCircle) {
+    conflictCircle.remove();
+  }
   selectedCell.classList.remove("empty");
   selectedCell.classList.remove("rejected");
 
@@ -823,21 +970,21 @@ candidateBtn.addEventListener("click", (e) => {
 
 // find possible candidates for a single cell, then this function can be used for all non-pre-filled cells
 
-function toggleButtons() {
-  // select both buttons and inputs within the right container
-  let controlElements = document.querySelectorAll(
-    ".right-container button:not(.chaos-container button), .right-container input:not(.chaos-container input)"
-  );
+// function toggleButtons() {
+//   // select both buttons and inputs within the right container
+//   let controlElements = document.querySelectorAll(
+//     ".right-container button:not(.chaos-container button), .right-container input:not(.chaos-container input)"
+//   );
 
-  // toggle the disabled property for each selected element
-  controlElements.forEach((item) => {
-    if (gameActivated) {
-      item.disabled = false;
-    } else {
-      item.disabled = true;
-    }
-  });
-}
+//   // toggle the disabled property for each selected element
+//   controlElements.forEach((item) => {
+//     if (gameActivated) {
+//       item.disabled = false;
+//     } else {
+//       item.disabled = true;
+//     }
+//   });
+// }
 
 // to store what move the user makes for the undo btn functionality
 function makeMove(value, row, col, operation) {
@@ -1009,11 +1156,30 @@ function updateChaosButtons() {
 let randomEnabled;
 let randomFreqEnabled;
 let min;
+let autoCheck = false;
 let max;
 let fixedFreq;
 let adjacentBombing = false;
 let actionsEnabled = [];
 let actualFreq; // in seconds so 3 times is 60/3 so 20 sec between changes
+
+let autocheckBtn = document.getElementById("autocheck-btn");
+
+autocheckBtn.addEventListener("click", function () {
+  autoCheck = !autoCheck;
+});
+
+let conflictsBtn = document.getElementById("conflicts-btn");
+
+conflictsBtn.addEventListener("click", function () {
+  conflicts = !conflicts;
+  let allCells = document.querySelectorAll(".cell");
+  allCells.forEach((cell) => {
+    if (cell.classList.contains("guessed")) {
+      findConflicts(cell);
+    }
+  });
+});
 
 function getRandomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
