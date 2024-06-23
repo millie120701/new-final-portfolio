@@ -39,6 +39,16 @@ candidateActivatedBox.addEventListener("click", function () {
   }
 });
 
+function resetConflicts() {
+  let conflictCircles = document.querySelectorAll(
+    ".fa-solid.fa-circle.conflict-circle"
+  );
+  console.log(conflictCircles);
+  conflictCircles.forEach((circle) => {
+    circle.remove();
+  });
+}
+
 function resetNumCandBox() {
   if (!numberActivatedBox.classList.contains("active")) {
     numberActivatedBox.classList.add("active");
@@ -134,6 +144,7 @@ function startGame() {
   // if the game was just won the buttons need activating again as they are disabled when the user wins
   noteModeEnabled = false;
   resetNumCandBox();
+  resetConflicts();
   undoBtn.disabled = false;
   movesHistory = [];
   gameActivated = true;
@@ -165,6 +176,7 @@ function rotateBoard() {
       ]}deg)`;
     } else {
       let cellContents = cell.children;
+      console.log(cellContents);
       for (i = 0; i < cellContents.length; i++) {
         cellContents[i].style.transform = `rotate(${-angles[randomIdx]}deg)`;
       }
