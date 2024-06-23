@@ -7,7 +7,7 @@ let winningBoard = JSON.parse(winningB.replace(/'/g, '"'));
 
 let sudokuBoard = document.getElementById("sudoku-board");
 let noteModeEnabled;
-
+let chaosIssue = false;
 let chaosModeActivated = false;
 let gameInProgress = true;
 let bombs;
@@ -43,7 +43,7 @@ function resetConflicts() {
   let conflictCircles = document.querySelectorAll(
     ".fa-solid.fa-circle.conflict-circle"
   );
-  console.log(conflictCircles);
+
   conflictCircles.forEach((circle) => {
     circle.remove();
   });
@@ -151,13 +151,29 @@ function startGame() {
   pauseBtn.style.display = "block";
   candidateBtn.checked = false;
   autoCandidateModeEnabled = false;
+  checkChaosValidity();
+  if (chaosIssue) {
+    if (!document.getElementById("chaos-btn").classList.contains("issue")) {
+      document.getElementById("chaos-btn").classList.add("issue");
+      document.getElementById("chaos-btn").classList.remove("active");
+      chaosModeActivated = false;
+    }
+  }
+  if (
+    !chaosIssue &&
+    document.getElementById("chaos-btn").classList.contains("issue")
+  ) {
+    document.getElementById("chaos-btn").classList.add("active");
+    document.getElementById("chaos-btn").classList.remove("issue");
+    chaosModeActivated = true;
+  }
   if (chaosModeActivated) {
     getChaosInformation();
     if (adjacentBombing) {
       setBombs();
     }
 
-    if (actionsEnabled) {
+    if (actionsEnabled.length > 0) {
       intervalId = setInterval(() => executeChaos(actionsEnabled), actualFreq);
     }
   }
@@ -176,7 +192,7 @@ function rotateBoard() {
       ]}deg)`;
     } else {
       let cellContents = cell.children;
-      console.log(cellContents);
+
       for (i = 0; i < cellContents.length; i++) {
         cellContents[i].style.transform = `rotate(${-angles[randomIdx]}deg)`;
       }
@@ -1151,12 +1167,93 @@ function findCandidates(row, col) {
 
 let chaosBtn = document.getElementById("chaos-btn");
 
+// if there is an issue, light the chaos button red to signal a problem
+
+// check if frequency is selected
+// if frequency is random range or fixed, ensure values given for both
+// check action(s) are selected
+
+function checkChaosValidity() {
+  // check actions, adjacent bombing doesnt need a timer so if only adjacent bombing is selected then frequency doesnt matter
+  freqChecked = document.querySelector(
+    ".frequency-options input[type = 'checkbox']:checked"
+  );
+
+  let actions = document.querySelectorAll(".actions-options input:checked");
+
+  if (
+    actions.length == 1 &&
+    actions[0].name == "adjacent-bombing" &&
+    !freqChecked
+  ) {
+    chaosIssue = false;
+    return;
+  }
+
+  if (
+    (freqChecked &&
+      actions.length == 1 &&
+      actions[0].name == "adjacent-bombing") ||
+    actions.length == 0
+  ) {
+    chaosIssue = true;
+    return;
+    // freq selected but no frequency-requiring action ticked
+  }
+  actions.forEach((action) => {
+    if (action.checked) {
+      if (action.name != "adjacent-bombing") {
+        // if a chaos action that isnt adjacent bombing has been selected, a frequency must be given, requiring issue check
+        if (freqChecked) {
+          if (freqChecked.getAttribute("id") == "random") {
+            chaosIssue = false;
+            return;
+          } else {
+            if (freqChecked.getAttribute("id") == "random-frequency") {
+              let inptValueOfChecked = document.querySelectorAll(
+                ".min-max-container input"
+              );
+              inptValueOfChecked.forEach((val) => {
+                if (val.value == "") {
+                  chaosIssue = true;
+                  return;
+                }
+              });
+            } else {
+              inptValueOfFixed = document.querySelector("#fixed-freq-input");
+              if (inptValueOfFixed.value == "") {
+                chaosIssue = true;
+                return;
+              }
+            }
+          }
+        } else {
+          chaosIssue = true;
+          return;
+        }
+        chaosIssue = false;
+      }
+    }
+  });
+}
+
 chaosBtn.addEventListener("click", function () {
-  this.classList.toggle("active");
-  if (this.classList.contains("active")) {
-    chaosModeActivated = true;
+  checkChaosValidity();
+  if (chaosIssue) {
+    if (!this.classList.contains("issue")) {
+      this.classList.add("issue");
+      this.classList.remove("active");
+      chaosModeActivated = false;
+      return;
+    }
   } else {
-    chaosModeActivated = false;
+    this.classList.remove("issue");
+    this.classList.toggle("active");
+    if (this.classList.contains("active")) {
+      chaosModeActivated = true;
+    } else {
+      chaosModeActivated = false;
+    }
   }
 });
 
@@ -1168,21 +1265,41 @@ let randomFreqBtn = document.getElementById("random-frequency");
 let randomFreqMax = document.getElementById("max-actions");
 let randomFreqMin = document.getElementById("min-actions");
 
-function updateChaosButtons() {
-  if (randomBtn.checked) {
-    fixedFreqBtn.disabled = true;
-    fixedFreqInpt.disabled = true;
-    randomFreqBtn.disabled = false;
-    randomFreqMax.disabled = false;
-    randomFreqMin.disabled = false;
-  } else {
-    fixedFreqBtn.disabled = false;
-    fixedFreqInpt.disabled = false;
-    randomFreqBtn.disabled = true;
-    randomFreqMax.disabled = true;
-    randomFreqMin.disabled = true;
-  }
-}
+document.querySelectorAll('input[type="number"]').forEach((input) => {
+  input.addEventListener("input", function () {
+    this.value = this.value.replace(/[^1-9]/g, "").substring(0, 1);
+
+    if (this.value !== "") {
+      let value = parseInt(this.value);
+      if (value > 9) {
+        this.value = 9;
+      } else if (value < 1) {
+        this.value = 1;
+      }
+    }
+    let minValue = parseInt(randomFreqMin.value);
+    let maxValue = parseInt(randomFreqMax.value);
+    if (input === randomFreqMin) {
+      if (minValue == 9) {
+        randomFreqMin.value = 8;
+        if (maxValue == 9) {
+          return;
+        }
+      }
+      if (minValue >= maxValue && maxValue != "") {
+        randomFreqMax.value = minValue + 1;
+      }
+    } else if (input == randomFreqMax) {
+      if (maxValue <= minValue && minValue != "") {
+        if (maxValue == 1) {
+          randomFreqMax.value = 2;
+          return;
+        }
+        randomFreqMin.value = maxValue - 1;
+      }
+    }
+  });
+});
 
 let randomEnabled;
 let randomFreqEnabled;
@@ -1235,25 +1352,34 @@ function getChaosInformation() {
   // see if random is checked:
   randomEnabled = randomBtn.checked;
   if (randomEnabled) {
-    // see if range is ticked
-    randomFreqEnabled = randomFreqBtn.checked;
-    if (randomFreqEnabled) {
-      min = randomFreqMin.value;
-      max = randomFreqMax.value;
-      actualFreq = Math.round(60 / getRandomNumber(min, max)) * 1000;
-    } else {
-      actualFreq = Math.round(60 / getRandomNumber(2, 4)) * 1000;
-    }
+    actualFreq = Math.round(60 / getRandomNumber(2, 4)) * 1000;
+    return;
+  }
+  randomFreqEnabled = randomFreqBtn.checked;
+  if (randomFreqEnabled) {
+    min = randomFreqMin.value;
+    max = randomFreqMax.value;
+    actualFreq = Math.round(60 / getRandomNumber(min, max)) * 1000;
   } else {
     fixedFreq = fixedFreqInpt.value;
     actualFreq = Math.round(60 / fixedFreq) * 1000;
   }
 }
 
-randomBtn.addEventListener("click", updateChaosButtons);
+freqCheckboxes = document.querySelectorAll(
+  ".frequency-options input[type='checkbox']"
+);
 
-window.onload = function () {
-  updateChaosButtons();
-};
+freqCheckboxes.forEach((box) => {
+  box.addEventListener("change", function () {
+    if (this.checked) {
+      freqCheckboxes.forEach((otherBox) => {
+        if (otherBox !== this) {
+          otherBox.checked = false;
+        }
+      });
+    }
+  });
+});
 
 startGame();

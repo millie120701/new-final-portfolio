@@ -862,6 +862,9 @@ flex-direction: column;
 #chaos-btn.active{
   color: #2eaebc;
 }
+#chaos-btn.issue{
+  color: red;
+}
 
 #chaos-btn{
   font-size: 19px;
@@ -1129,7 +1132,24 @@ flex-direction: column;
   top: 10%;
 }
 
+.warning-box{
+  height: 65px;
+  width: 170px;
+  position: absolute;
+  right: 2.5%;
+  box-shadow: 0 0 2px 1.5px red;
+  background-color:rgba(231, 81, 81, 0.8);
+  bottom: 5%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
+.warning-box p{
+  font-size: 11px;
+  font-weight: 400 !important;
+
+}
 .tooltip-text{
   position: absolute;
   font-size: 10px;
@@ -1146,6 +1166,26 @@ flex-direction: column;
 }
 
 .adjacent-container i:hover + .tooltip-text {
+  opacity: 1;
+}
+
+.tooltip-text-chaos{
+  position: absolute;
+  font-size: 10px;
+  color: var(--off-white);
+  top:  -100%;
+  height: 15px;
+  background-color: rgb(245, 74, 74);
+  width: 130px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+
+  transition: opacity 0.3s ease-in-out;
+}
+
+#chaos-bar i.issue:hover + .tooltip-text-chaos {
   opacity: 1;
 }
 
