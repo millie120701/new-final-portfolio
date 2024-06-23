@@ -913,6 +913,16 @@ function revealCell(selectedCell) {
     selectedRow,
     selectedCol
   );
+  if (autoCandidateModeEnabled) {
+    let allEmptyCells = document.querySelectorAll(".empty");
+    allEmptyCells.forEach((emptyCell) => {
+      let emptyCellRow =
+        emptyCell.classList[2][emptyCell.classList[2].length - 1];
+      let emptyCellCol =
+        emptyCell.classList[4][emptyCell.classList[4].length - 1];
+      findCandidates(emptyCellRow, emptyCellCol);
+    });
+  }
 }
 
 let revealPuzzleBtn = document.getElementById("reveal-puzzle-btn");
