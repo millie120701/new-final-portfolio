@@ -1166,6 +1166,8 @@ function findCandidates(row, col) {
 }
 
 let chaosBtn = document.getElementById("chaos-btn");
+let warningBox = document.querySelector(".warning-box");
+let warningBoxText = document.querySelector(".warning-box p");
 
 // if there is an issue, light the chaos button red to signal a problem
 
@@ -1187,6 +1189,7 @@ function checkChaosValidity() {
     !freqChecked
   ) {
     chaosIssue = false;
+    warningBox.style.display = "none";
     return;
   }
 
@@ -1197,6 +1200,9 @@ function checkChaosValidity() {
     actions.length == 0
   ) {
     chaosIssue = true;
+    warningBox.style.display = "flex";
+    warningBoxText.textContent =
+      "Adjacent bombing does not require a frequency, remove frequency";
     return;
     // freq selected but no frequency-requiring action ticked
   }
@@ -1207,6 +1213,7 @@ function checkChaosValidity() {
         if (freqChecked) {
           if (freqChecked.getAttribute("id") == "random") {
             chaosIssue = false;
+            warningBox.style.display = "none";
             return;
           } else {
             if (freqChecked.getAttribute("id") == "random-frequency") {
@@ -1216,6 +1223,9 @@ function checkChaosValidity() {
               inptValueOfChecked.forEach((val) => {
                 if (val.value == "") {
                   chaosIssue = true;
+                  warningBox.style.display = "flex";
+                  warningBoxText.textContent =
+                    "Frequency value not given where required";
                   return;
                 }
               });
@@ -1223,15 +1233,22 @@ function checkChaosValidity() {
               inptValueOfFixed = document.querySelector("#fixed-freq-input");
               if (inptValueOfFixed.value == "") {
                 chaosIssue = true;
+                warningBox.style.display = "flex";
+                warningBoxText.textContent =
+                  "Frequency value not given where required";
                 return;
               }
             }
           }
         } else {
           chaosIssue = true;
+          warningBox.style.display = "flex";
+          warningBoxText.textContent =
+            "Frequency not selected for an action requiring a frequency value";
           return;
         }
         chaosIssue = false;
+        warningBox.style.display = "none";
       }
     }
   });
