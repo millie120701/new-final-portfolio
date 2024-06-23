@@ -1324,7 +1324,6 @@ let min;
 let autoCheck = false;
 let max;
 let fixedFreq;
-let adjacentBombing = false;
 let actionsEnabled = [];
 let actualFreq; // in seconds so 3 times is 60/3 so 20 sec between changes
 
@@ -1352,6 +1351,7 @@ function getRandomNumber(min, max) {
 
 function getChaosInformation() {
   // get actions enabled
+  adjacentBombing = false;
   let actions = document.querySelectorAll(".actions-options input");
   actions.forEach((action) => {
     if (action.checked) {
@@ -1362,9 +1362,7 @@ function getChaosInformation() {
       }
     }
   });
-  if (!actionsEnabled.includes("adjacent-bombing")) {
-    adjacentBombing = false;
-  }
+
   // get frequency
   // see if random is checked:
   randomEnabled = randomBtn.checked;
