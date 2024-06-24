@@ -12,5 +12,5 @@ urlpatterns = [
          name='index'),  # With difficulty parameter
     path('', views.index, name='index'),
     path('api/load-data/', load_pickle_data, name='load_pickle_data'),
-
+    
 ]
