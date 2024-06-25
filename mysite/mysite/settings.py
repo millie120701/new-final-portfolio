@@ -33,6 +33,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "sudoku",
+    "portfolio"
 ]
 
 MIDDLEWARE = [
@@ -51,7 +53,7 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "sudoku" / "templates"],
+       'DIRS': [BASE_DIR / "sudoku" / "templates", BASE_DIR / "portfolio" / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -68,12 +70,12 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': ':memory:',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': ':memory:',
+#     }
+# }
 
 
 # Password validation
@@ -115,6 +117,7 @@ if not DEBUG:
 # Additional directories to include when searching for static files
 STATICFILES_DIRS = [
     BASE_DIR / "sudoku" / "static",
+    BASE_DIR / "portfolio" / "static", 
 ]
 
 # The directory where 'collectstatic' will collect static files for deployment
