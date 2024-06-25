@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {% load static %}
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'css/index-styles.css' %}"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <header>
+      <div class="logo-content">
+        <h3 class="logo-text">Aaron</h3>
+      </div>
+
+      <nav class="primary-navigation">
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li><a href="/projects">Projects</a></li>
+          <li><a href="/education">Education</a></li>
+          <li><a href="/contact"> Contact</a></li>
+        </ul>
+      </nav>
+      <div class="hamburger-menu">
+        <span class="line line-1"></span>
+        <span class="line line-2"></span>
+        <span class="line line-3"></span>
+      </div>
+    </header>
+    <div class="front-container">
+      <div class="front-grid">
+        <div class="front-text-container">
+          <div class="front-text-content">
+            <h1>Hi,</h1>
+            <h1>I'm Aaron</h1>
+            <p>
+              I am a Full-stack developer. I specialise in Web development and
+              UI design.
+            </p>
+            <div class="bottom-info">
+              <button id="front-contact-btn">
+                <a href="/contact">Contact me</a>
+              </button>
+
+              <div class="front-socials">
+                <p>
+                  <a
+                    href="https://www.linkedin.com/in/aaron-gallacher-3719a5307/"
+                    ><i id="social-btn" class="fa-brands fa-linkedin"></i
+                  ></a>
+                </p>
+                <p>
+                  <a href="https://github.com/aaronwebdev12"
+                    ><i id="social-btn" class="fa-brands fa-github"></i
+                  ></a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="avatar-container">
+          <img src="{% static 'images/pose-self.png' %}" />
+        </div>
+      </div>
+    </div>
+
+    <script src="{% static 'js/index-script.js' %}"></script>
+    <script
+      src="https://kit.fontawesome.com/e08acc423f.js"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
