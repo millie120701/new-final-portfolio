@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {% load static %}
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'css/about-styles.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'css/index-styles.css' %}"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <header>
+    <div class="logo-content">
+      <h3 class="logo-text"><a href="/">Aaron</a></h3>
+    </div>
+
+    <nav class="primary-navigation">
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/projects">Projects</a></li>
+        <li><a href="/education">Education</a></li>
+        <li><a href="/contact"> Contact</a></li>
+      </ul>
+    </nav>
+    <div class="hamburger-menu">
+      <span class="line line-1"></span>
+      <span class="line line-2"></span>
+      <span class="line line-3"></span>
+    </div>
+  </header>
+  <body>
+    <div class="main-content">
+      <div class="main-content-container">
+        <h3>About me</h3>
+        <br />
+        <div class="main-grid-section">
+          <div class="grid-section-left">
+            <p>
+              I am a full-stack developer based in Manchester, UK. I specialise
+              in web development and UI design, incorporating both front-end and
+              back-end technologies.<br /><br />
+              I have created both static websites and applications utilising
+              multiple frameworks such as Django. I have experience in design
+              using tools such as Figma.
+            </p>
+            <div class="languages-container">
+              <h3>Proficient</h3>
+              <ul class="proficient-languages lg">
+                <li>
+                  Python
+                  <img src="{% static 'images/python-logo.png' %}" />
+                </li>
+                <li>
+                  Javascript
+                  <img src="{% static 'images/javascript-logo.png' %}" />
+                </li>
+                <li>CSS<img src="{% static 'images/css-logo.png' %}" /></li>
+                <li>
+                  HTML<img
+                    id="html-img"
+                    src="{% static 'images/html-logo.png' %}"
+                  />
+                </li>
+              </ul>
+              <h3>Basic</h3>
+              <ul class="basic-languages lg">
+                <li>C#<img src="{% static 'images/c-logo.png' %}" /></li>
+                <li>Swift<img src="{% static 'images/swift-logo.png' %}" /></li>
+                <li>
+                  SQL<img
+                    id="sql-img"
+                    src="{% static 'images/sql-logo.png' %}"
+                  />
+                </li>
+              </ul>
+              <h3>Frameworks</h3>
+              <ul class="frameworks lg">
+                <li>
+                  React<img
+                    id="react-img"
+                    src="{% static 'images/react-logo.png' %}"
+                  />
+                </li>
+                <li>
+                  Django<img
+                    id="dj-img"
+                    src="{% static 'images/django-logo.png' %}"
+                  />
+                </li>
+                <li>
+                  Bootstrap<img
+                    id="boot-img"
+                    src="{% static 'images/boot-logo.png' %}"
+                  />
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="grid-section-right">
+            <div><img src="{% static 'images/about-pose.png' %}" /></div>
+          </div>
+        </div>
+        <div class="second-container">
+          <h3>Employment</h3>
+          <div class="cfg-header">
+            <p>
+              Freelance coding instructor -
+              <a id="cfg-link" href="https://codefirstgirls.com/"
+                >CodeFirstGirls</a
+              >
+            </p>
+            <p>January 2024 - Present</p>
+          </div>
+
+          <div class="cfg-info-box">
+            <div class="roles">
+              <p>Roles</p>
+              <ul class="employment-list">
+                <li>Designing course content</li>
+                <li>Lesson planning</li>
+                <li>Teaching live classes</li>
+                <li>Out-of-office hours support</li>
+                <li>Project coordination</li>
+              </ul>
+            </div>
+            <div class="my-courses">
+              <p>My courses</p>
+              <ul class="courses-teach">
+                <li>Javascript</li>
+                <li>Python & Apps</li>
+                <li>Web Development</li>
+              </ul>
+            </div>
+            <div class="my-awards">
+              <p>Awards</p>
+              <ul class="awards-list">
+                <li>Best Web Dev Project</li>
+                <li>Best Javascript Project</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="{% static 'js/index-script.js' %}"></script>
+    <script
+      src="https://kit.fontawesome.com/e08acc423f.js"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
