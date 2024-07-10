@@ -27,6 +27,10 @@ html{
   
 
 }
+
+.projects-content.hidden{
+    display: block;
+}
 .all-projects{
     display: grid;
     grid-template-columns: 1fr 1fr;
