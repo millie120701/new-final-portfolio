@@ -876,9 +876,14 @@ function checkWin() {
   stopTimer();
   winScreen.classList.add("active");
   winTimeSpan.textContent = document.getElementById("display").innerHTML;
-  winDifficultySpan.textContent = localStorage
+  let difficultyToText = localStorage
     .getItem("selectedDifficulty")
     .replace("/", "");
+  if (difficultyToText != null) {
+    winDifficultySpan.textContent = difficultyToText;
+  } else {
+    winDifficultySpan.textContent = "Easy";
+  }
   pauseBtn.style.display = "none";
   gameActivated = false;
   gameInProgress = false;
