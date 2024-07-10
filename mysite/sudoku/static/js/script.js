@@ -643,33 +643,6 @@ function findConflicts(selectedCell) {
     }
   }
 
-  function handleControlPanelNum(numberPressed, selectedCell, fromUndo) {
-    if (autoCandidateModeEnabled) {
-      if (noteModeEnabled) {
-        activateCandidate(numberPressed);
-        return;
-      } else {
-        addNum(numberPressed, selectedCell, false);
-
-        let allEmptyCells = document.querySelectorAll(".empty");
-        allEmptyCells.forEach((emptyCell) => {
-          let emptyCellRow =
-            emptyCell.classList[2][emptyCell.classList[2].length - 1];
-          let emptyCellCol =
-            emptyCell.classList[4][emptyCell.classList[4].length - 1];
-          findCandidates(emptyCellRow, emptyCellCol);
-        });
-      }
-    } else if (noteModeEnabled) {
-      selectedCell.querySelector(".input-field").textContent = "";
-      activateNote(numberPressed);
-      return;
-    } else {
-      // If a cell is selected, insert the pressed number into its input field
-      // show last num and cell changed if num pressed on non-pre-filled cell
-      addNum(numberPressed, selectedCell, false);
-    }
-  }
   // look at numbers in same row that it cannot be
   let cellsinRow = document.querySelectorAll(`.row.row-${row}`);
   cellsinRow.forEach((r) => {
@@ -1424,5 +1397,33 @@ freqCheckboxes.forEach((box) => {
     }
   });
 });
+
+function handleControlPanelNum(numberPressed, selectedCell, fromUndo) {
+  if (autoCandidateModeEnabled) {
+    if (noteModeEnabled) {
+      activateCandidate(numberPressed);
+      return;
+    } else {
+      addNum(numberPressed, selectedCell, false);
+
+      let allEmptyCells = document.querySelectorAll(".empty");
+      allEmptyCells.forEach((emptyCell) => {
+        let emptyCellRow =
+          emptyCell.classList[2][emptyCell.classList[2].length - 1];
+        let emptyCellCol =
+          emptyCell.classList[4][emptyCell.classList[4].length - 1];
+        findCandidates(emptyCellRow, emptyCellCol);
+      });
+    }
+  } else if (noteModeEnabled) {
+    selectedCell.querySelector(".input-field").textContent = "";
+    activateNote(numberPressed);
+    return;
+  } else {
+    // If a cell is selected, insert the pressed number into its input field
+    // show last num and cell changed if num pressed on non-pre-filled cell
+    addNum(numberPressed, selectedCell, false);
+  }
+}
 
 startGame();
